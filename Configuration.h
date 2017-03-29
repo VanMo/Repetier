@@ -689,9 +689,9 @@ Value is used for all generic tables created. */
 // ############# Heated bed configuration ########################
 
 /** \brief Set true if you have a heated bed connected to your board, false if not */
-#define HAVE_HEATED_BED 0
+#define HAVE_HEATED_BED 1
 
-#define HEATED_BED_MAX_TEMP 115
+#define HEATED_BED_MAX_TEMP 190
 /** Skip M190 wait, if heated bed is already within x degrees. Fixed numbers only, 0 = off. */
 #define SKIP_M190_IF_WITHIN 3
 
@@ -1388,8 +1388,9 @@ to recalibrate z.
 
 #define FEATURE_Z_PROBE 1
 #define Z_PROBE_PIN 18
+#define Z_PROBE_ENABLE_PIN 57
 #define Z_PROBE_PULLUP 1
-#define Z_PROBE_ON_HIGH 0
+#define Z_PROBE_ON_HIGH 1
 #define Z_PROBE_X_OFFSET 0
 #define Z_PROBE_Y_OFFSET 0
 #define Z_PROBE_BED_DISTANCE 5.0 // Higher than max bed level distance error in mm
@@ -1399,18 +1400,18 @@ to recalibrate z.
 #define Z_PROBE_WAIT_BEFORE_TEST 0
 /** Speed of z-axis in mm/s when probing */
 #define Z_PROBE_SPEED 5
-#define Z_PROBE_XY_SPEED 40
-#define Z_PROBE_SWITCHING_DISTANCE 5.0 // Distance to safely switch off probe after it was activated
-#define Z_PROBE_REPETITIONS 1 // Repetitions for probing at one point.
+#define Z_PROBE_XY_SPEED 80
+#define Z_PROBE_SWITCHING_DISTANCE 1.0 // Distance to safely switch off probe after it was activated
+#define Z_PROBE_REPETITIONS 3 // Repetitions for probing at one point.
 /** Distance between nozzle and bed when probe triggers. */
-#define Z_PROBE_HEIGHT 0
+#define Z_PROBE_HEIGHT -1.5
 /** These scripts are run before resp. after the z-probe is done. Add here code to activate/deactivate probe if needed. */
 #define Z_PROBE_START_SCRIPT "G1 X0 Y0 Z20"
 #define Z_PROBE_FINISHED_SCRIPT ""
 /** Set 1 if you need a hot extruder for good probe results. Normally only required if nozzle is probe. */
-#define Z_PROBE_REQUIRES_HEATING 0
+#define Z_PROBE_REQUIRES_HEATING 1
 /** Minimum extruder temperature for probing. If it is lower, it will be increased to that value. */
-#define Z_PROBE_MIN_TEMPERATURE 150
+#define Z_PROBE_MIN_TEMPERATURE 200
 
 /*
 Define how we measure the bed rotation. 
@@ -1543,7 +1544,7 @@ Always hard to say since the other angle is 89° in this case!
 
 /* Define a pin to tuen light on/off */
 #define CASE_LIGHTS_PIN -1
-#define CASE_LIGHT_DEFAULT_ON 1
+#define CASE_LIGHT_DEFAULT_ON 0
 
 /** Set to false to disable SD support: */
 #ifndef SDSUPPORT  // Some boards have SD support on board. These define the values already in pins.h
@@ -1745,7 +1746,7 @@ If you have leveling with bed coating or fixed z min you can use this menu to ad
 #define UI_SET_PRESET_EXTRUDER_TEMP_ABS   240
 // Extreme values
 #define UI_SET_MIN_HEATED_BED_TEMP  55
-#define UI_SET_MAX_HEATED_BED_TEMP 120
+#define UI_SET_MAX_HEATED_BED_TEMP HEATED_BED_MAX_TEMP
 #define UI_SET_MIN_EXTRUDER_TEMP   180
 #define UI_SET_MAX_EXTRUDER_TEMP   270
 #define UI_SET_EXTRUDER_FEEDRATE 2 // mm/sec

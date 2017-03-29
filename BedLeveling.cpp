@@ -410,6 +410,7 @@ void Printer::startProbing(bool runScript) {
   float oldOffX = Printer::offsetX;
   float oldOffY = Printer::offsetY;
   float oldOffZ = Printer::offsetZ;
+  //WRITE(Z_PROBE_ENABLE_PIN,HIGH);//####################################################
   if (runScript)
     GCode::executeFString(Com::tZProbeStartScript);
   float maxStartHeight = EEPROM::zProbeBedDistance() + (EEPROM::zProbeHeight() > 0 ? EEPROM::zProbeHeight() : 0) + 0.1;
@@ -428,6 +429,8 @@ void Printer::finishProbing() {
   float oldOffX = Printer::offsetX;
   float oldOffY = Printer::offsetY;
   float oldOffZ = Printer::offsetZ;
+  //WRITE(Z_PROBE_ENABLE_PIN,LOW);//####################################################
+  
   GCode::executeFString(Com::tZProbeEndScript);
   if (Extruder::current) {
     Printer::offsetX = -Extruder::current->xOffset * Printer::invAxisStepsPerMM[X_AXIS];
@@ -481,15 +484,18 @@ float Printer::runZProbe(bool first, bool last, uint8_t repeat, bool runStartScr
     int32_t offx = axisStepsPerMM[X_AXIS] * EEPROM::zProbeXOffset();
     int32_t offy = axisStepsPerMM[Y_AXIS] * EEPROM::zProbeYOffset();
     //PrintLine::moveRelativeDistanceInSteps(-offx,-offy,0,0,EEPROM::zProbeXYSpeed(),true,true);
+    WRITE(Z_PROBE_ENABLE_PIN,HIGH);
     waitForZProbeStart();
     setZProbingActive(true);
-    PrintLine::moveRelativeDistanceInSteps(0, 0, -probeDepth, 0, EEPROM::zProbeSpeed(), true, true);
+    //###############################
+    PrintLine::moveRelativeDistanceInSteps(0, 0, -probeDepth, 0, EEPROM::zProbeSpeed()/(r*2+1), true, true);
     if (stepsRemainingAtZHit < 0)
     {
       Com::printErrorFLN(Com::tZProbeFailed);
       return -1;
     }
     setZProbingActive(false);
+    WRITE(Z_PROBE_ENABLE_PIN,LOW);
 #if NONLINEAR_SYSTEM
     stepsRemainingAtZHit = realDeltaPositionSteps[Z_AXIS] - currentNonlinearPositionSteps[Z_AXIS];
 #endif
