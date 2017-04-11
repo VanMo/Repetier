@@ -188,7 +188,7 @@ void Commands::printTemperatures(bool showRaw) {
 #endif
 }
 void Commands::changeFeedrateMultiply(int factor) {
-  if (factor < 25) factor = 25;
+  if (factor < 5) factor = 5;
   if (factor > 500) factor = 500;
   Printer::feedrate *= (float)factor / (float)Printer::feedrateMultiply;
   Printer::feedrateMultiply = factor;
@@ -1104,7 +1104,7 @@ void Commands::processGCode(GCode *com) {
       { // G30 single probe set Z0
         uint8_t p = (com->hasP() ? (uint8_t)com->P : 3);
         if (Printer::runZProbe(p & 1, p & 2) == ILLEGAL_Z_PROBE) {
-          GCode::fatalError(PSTR("G29 leveling failed!"));
+          GCode::fatalError(PSTR("G30 leveling failed!"));
           break;
         }
         Printer::updateCurrentPosition(p & 1);

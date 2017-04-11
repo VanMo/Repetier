@@ -1254,6 +1254,7 @@ to activate the quadratic term. Only adds lots of computations and storage usage
 //#define BAUDRATE 76800
 //#define BAUDRATE 115200
 #define BAUDRATE 250000
+//#define BAUDRATE 230400
 
 /**
 Some boards like Gen7 have a power on pin, to enable the ATX power supply. If this is defined,
