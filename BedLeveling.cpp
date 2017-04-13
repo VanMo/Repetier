@@ -488,7 +488,7 @@ float Printer::runZProbe(bool first, bool last, uint8_t repeat, bool runStartScr
     waitForZProbeStart();
     setZProbingActive(true);
     //###############################
-    PrintLine::moveRelativeDistanceInSteps(0, 0, -probeDepth, 0, EEPROM::zProbeSpeed()/(r*2+1), true, true);
+    PrintLine::moveRelativeDistanceInSteps(0, 0, -probeDepth, 0, EEPROM::zProbeSpeed()/(r*9+1), true, true);
     if (stepsRemainingAtZHit < 0)
     {
       Com::printErrorFLN(Com::tZProbeFailed);
@@ -514,10 +514,11 @@ float Printer::runZProbe(bool first, bool last, uint8_t repeat, bool runStartScr
         lastCorrection = newLastCorrection;
       }
     }
-    sum += lastCorrection - currentPositionSteps[Z_AXIS];
+    sum = lastCorrection - currentPositionSteps[Z_AXIS];
     if (r + 1 < repeat)
       PrintLine::moveRelativeDistanceInSteps(0, 0, shortMove, 0, EEPROM::zProbeSpeed(), true, false);
   }
+  sum=sum*repeat;
   float distance = (float)sum * invAxisStepsPerMM[Z_AXIS] / (float)repeat + EEPROM::zProbeHeight();
   Com::printF(Com::tZProbe, distance);
   Com::printF(Com::tSpaceXColon, realXPosition());
