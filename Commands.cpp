@@ -1006,6 +1006,33 @@ void Commands::processGCode(GCode *com) {
         printCurrentPosition(PSTR("229 "));
       }
       break;
+    case 129:{
+        Commands::waitUntilEndOfAllMoves();
+        bool ok = true;
+        //Printer::startProbing(true);
+        //bool oldAutolevel = Printer::isAutolevelActive();
+        //Printer::setAutolevelActive(false);
+        
+        float Z = Printer::runZProbe(true, false, Z_PROBE_REPETITIONS, false);
+        if (Z == ILLEGAL_Z_PROBE) ok = false;
+        Com::printFLN(PSTR("ZProbe:"), Z);
+        //Com::printFLN(PSTR("offset="),Printer::coordinateOffset[Z_AXIS]);
+        if (com->hasS() && com->S) {
+            Printer::updateCurrentPosition();
+            float Old_zLength=Printer::zLength;
+            Printer::zLength += Z - Printer::currentPosition[Z_AXIS];
+            //Printer::currentPosition[Z_AXIS]=0;
+            //Printer::lastCmdPos[Z_AXIS]=0; 
+            Printer::coordinateOffset[Z_AXIS]=Printer::zLength-Old_zLength;
+            Printer::updateDerivedParameter();
+            //Printer::homeAxis(true, true, true);
+            //printCurrentPosition(PSTR("G129 "));
+            
+        }
+        Com::printFLN(PSTR("offset="),Printer::coordinateOffset[Z_AXIS]);
+            //Printer::finishProbing();
+    }   
+      break;
     case 29: { // G29 3 points, build average or distortion compensation
 #if defined(Z_PROBE_MIN_TEMPERATURE) && Z_PROBE_MIN_TEMPERATURE && Z_PROBE_REQUIRES_HEATING
         float actTemp[NUM_EXTRUDER];
