@@ -458,6 +458,41 @@ void Printer::finishProbing() {
 
   Then we return the measured and corrected z distance.
 */
+void Printer::ZProbeDown()
+{
+        Commands::waitUntilEndOfAllMoves();  
+        #if NONLINEAR_SYSTEM
+          realDeltaPositionSteps[Z_AXIS] = currentNonlinearPositionSteps[Z_AXIS]; // update real
+        #endif
+        stepsRemainingAtZHit = -1;
+        WRITE(Z_PROBE_ENABLE_PIN,HIGH);
+        waitForZProbeStart();
+        setZProbingActive(true);
+        bool relative=Printer::relativeCoordinateMode;
+        Printer::relativeCoordinateMode = true;
+        PrintLine::moveRelativeDistanceInSteps(0, 0, -axisStepsPerMM[Z_AXIS]*15, 0, EEPROM::zProbeSpeed(), true, true);
+        Printer::relativeCoordinateMode = relative;
+        //Printer::moveToReal(IGNORE_COORDINATE,IGNORE_COORDINATE,Printer::currentPosition[Z_AXIS]-15,IGNORE_COORDINATE,EEPROM::zProbeSpeed()/2); 
+        if (stepsRemainingAtZHit < 0)
+       {
+           Com::printErrorFLN(Com::tZProbeFailed);
+           //return -1;
+        }
+        Printer::setZProbingActive(false);
+        WRITE(Z_PROBE_ENABLE_PIN,LOW);
+        #if NONLINEAR_SYSTEM
+          stepsRemainingAtZHit = realDeltaPositionSteps[Z_AXIS] - currentNonlinearPositionSteps[Z_AXIS];
+        #endif
+        #if DRIVE_SYSTEM == 3
+          currentNonlinearPositionSteps[X_AXIS] += stepsRemainingAtZHit;
+          currentNonlinearPositionSteps[Y_AXIS] += stepsRemainingAtZHit;
+          currentNonlinearPositionSteps[Z_AXIS] += stepsRemainingAtZHit;
+        #endif
+        currentPositionSteps[Z_AXIS] += stepsRemainingAtZHit; // now current position is correct
+        
+        //Printer::updateCurrentPosition();
+        //Printer::updateDerivedParameter();
+}
 float Printer::runZProbe(bool first, bool last, uint8_t repeat, bool runStartScript) {
   float oldOffX =  Printer::offsetX;
   float oldOffY =  Printer::offsetY;

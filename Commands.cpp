@@ -1006,12 +1006,47 @@ void Commands::processGCode(GCode *com) {
         printCurrentPosition(PSTR("229 "));
       }
       break;
+    case 128:{//Parking
+        //Printer::HomeAxis(true,true,false);
+        
+        Commands::waitUntilEndOfAllMoves();
+        bool relative=Printer::relativeCoordinateMode;
+        Printer::relativeCoordinateMode = false;
+        if((Printer::currentPosition[Z_AXIS]+5)<Printer::zLength)
+          //PrintLine::moveRelativeDistanceInSteps(IGNORE_COORDINATE, IGNORE_COORDINATE, Printer::axisStepsPerMM[Z_AXIS]*5, 0, Printer::homingFeedrate[Z_AXIS], true, true);
+          //PrintLine::moveRelativeDistanceInSteps(0, 0, axisStepsPerMM[Z_AXIS]*15, 0, EEPROM::zProbeSpeed(), true, true);
+        {
+          Printer::moveToReal(IGNORE_COORDINATE,IGNORE_COORDINATE,Printer::currentPosition[Z_AXIS]+5,IGNORE_COORDINATE,Printer::homingFeedrate[Z_AXIS]); 
+          //Printer::updateCurrentPosition();
+        }
+        Printer::moveToReal(0,0,IGNORE_COORDINATE,IGNORE_COORDINATE,Printer::homingFeedrate[Z_AXIS]); 
+        //Printer::updateCurrentPosition();
+        if(com->hasZ())
+        {
+          Printer::moveToReal(IGNORE_COORDINATE,IGNORE_COORDINATE,com->Z,IGNORE_COORDINATE,Printer::homingFeedrate[Z_AXIS]); 
+          //Printer::updateCurrentPosition();
+        }
+        if(com->hasX()&&com->hasY())
+        {
+          Printer::moveToReal(com->X,com->Y,IGNORE_COORDINATE,IGNORE_COORDINATE,Printer::homingFeedrate[Z_AXIS]); 
+          //Printer::updateCurrentPosition();
+        }
+        
+        //Printer::runZProbe(false, false, 1, false);
+        Printer::relativeCoordinateMode=relative;
+        Printer::ZProbeDown();
+        //Printer::moveToReal(IGNORE_COORDINATE,IGNORE_COORDINATE,Printer::currentPosition[Z_AXIS]-15,IGNORE_COORDINATE,Printer::homingFeedrate[Z_AXIS]); 
+        //PrintLine::moveRelativeDistanceInSteps(0, 0, -15*axisStepsPerMM[Z_AXIS], 0, EEPROM::zProbeSpeed(), true, true);
+        //Commands::waitUntilEndOfAllMoves();
+        Printer::updateCurrentPosition(true);
+      }
+      break;
     case 129:{
         Commands::waitUntilEndOfAllMoves();
         bool ok = true;
         //Printer::startProbing(true);
-        //bool oldAutolevel = Printer::isAutolevelActive();
-        //Printer::setAutolevelActive(false);
+        bool oldAutolevel = Printer::isAutolevelActive();
+        Printer::setAutolevelActive(false);
         
         float Z = Printer::runZProbe(true, false, Z_PROBE_REPETITIONS, false);
         if (Z == ILLEGAL_Z_PROBE) ok = false;
@@ -1021,16 +1056,12 @@ void Commands::processGCode(GCode *com) {
             Printer::updateCurrentPosition();
             float Old_zLength=Printer::zLength;
             Printer::zLength += Z - Printer::currentPosition[Z_AXIS];
-            //Printer::currentPosition[Z_AXIS]=0;
-            //Printer::lastCmdPos[Z_AXIS]=0; 
             Printer::coordinateOffset[Z_AXIS]=Printer::zLength-Old_zLength;
             Printer::updateDerivedParameter();
-            //Printer::homeAxis(true, true, true);
-            //printCurrentPosition(PSTR("G129 "));
-            
+            Com::printFLN(PSTR("offset="),Printer::coordinateOffset[Z_AXIS]);
         }
-        Com::printFLN(PSTR("offset="),Printer::coordinateOffset[Z_AXIS]);
-            //Printer::finishProbing();
+        Printer::setAutolevelActive(oldAutolevel);
+        Printer::updateCurrentPosition(false);
     }   
       break;
     case 29: { // G29 3 points, build average or distortion compensation
