@@ -127,6 +127,10 @@ have problems with other modules using the eeprom */
 #define EPR_BENDING_CORRECTION_A              1036
 #define EPR_BENDING_CORRECTION_B              1040
 #define EPR_BENDING_CORRECTION_C              1044
+#define EPR_PARKING_POS_X                     1048
+#define EPR_PARKING_POS_Y                     1052
+#define EPR_PARKING_POS_Z                     1056
+
 
 #if EEPROM_MODE != 0
 #define EEPROM_FLOAT(x) HAL::eprGetFloat(EPR_##x)

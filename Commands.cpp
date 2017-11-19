@@ -1021,16 +1021,11 @@ void Commands::processGCode(GCode *com) {
         }
         Printer::moveToReal(0,0,IGNORE_COORDINATE,IGNORE_COORDINATE,Printer::homingFeedrate[Z_AXIS]); 
         //Printer::updateCurrentPosition();
-        if(com->hasZ())
+        if(Printer::ParkingPositionMM[Z_AXIS]>0)
         {
-          Printer::moveToReal(IGNORE_COORDINATE,IGNORE_COORDINATE,com->Z,IGNORE_COORDINATE,Printer::homingFeedrate[Z_AXIS]); 
-          //Printer::updateCurrentPosition();
-        }
-        if(com->hasX()&&com->hasY())
-        {
-          Printer::moveToReal(com->X,com->Y,IGNORE_COORDINATE,IGNORE_COORDINATE,Printer::homingFeedrate[Z_AXIS]); 
-          //Printer::updateCurrentPosition();
-        }
+          Printer::moveToReal(IGNORE_COORDINATE,IGNORE_COORDINATE,Printer::ParkingPositionMM[Z_AXIS],IGNORE_COORDINATE,Printer::homingFeedrate[Z_AXIS]); 
+          Printer::moveToReal(Printer::ParkingPositionMM[X_AXIS],Printer::ParkingPositionMM[Y_AXIS],IGNORE_COORDINATE,IGNORE_COORDINATE,Printer::homingFeedrate[Z_AXIS]); 
+        }else break;
         
         //Printer::runZProbe(false, false, 1, false);
         Printer::relativeCoordinateMode=relative;

@@ -447,7 +447,10 @@ FSTRINGVALUE(Com::tPrinterModeCNC, "PrinterMode:CNC")
 #ifdef STARTUP_GCODE
 FSTRINGVALUE(Com::tStartupGCode, STARTUP_GCODE)
 #endif
-
+//-----------------------------------------------------------------------------------------------------------
+FSTRINGVALUE(Com::tEPRParkingX, "Parking position X")
+FSTRINGVALUE(Com::tEPRParkingY, "Parking position Y")
+FSTRINGVALUE(Com::tEPRParkingZ, "Parking position Z")
 void Com::config(FSTRINGPARAM(text)) {
   printF(tConfig);
   printFLN(text);

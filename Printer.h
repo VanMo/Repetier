@@ -305,6 +305,7 @@ public:
     static float invAxisStepsPerMM[];
     static float maxFeedrate[];
     static float homingFeedrate[];
+    static float ParkingPositionMM[];
     static float maxAccelerationMMPerSquareSecond[];
     static float maxTravelAccelerationMMPerSquareSecond[];
     static unsigned long maxPrintAccelerationStepsPerSquareSecond[];

@@ -415,7 +415,9 @@ class Com
     FSTRINGVAR(tEPRSegmentsPerSecondPrint)
     FSTRINGVAR(tEPRSegmentsPerSecondTravel)
 #endif
-
+    FSTRINGVAR(tEPRParkingX)
+    FSTRINGVAR(tEPRParkingY)
+    FSTRINGVAR(tEPRParkingZ)
     static void config(FSTRINGPARAM(text));
     static void config(FSTRINGPARAM(text), int value);
     static void config(FSTRINGPARAM(text), const char *msg);

@@ -772,6 +772,10 @@ void EEPROM::readDataFromEEPROM(bool includeExtruder)
   Printer::updateDerivedParameter();
   Extruder::initHeatedBed();
 #endif
+//---------------------------------------------------------------------
+Printer::ParkingPositionMM[X_AXIS] = HAL::eprGetFloat(EPR_PARKING_POS_X);
+Printer::ParkingPositionMM[Y_AXIS] = HAL::eprGetFloat(EPR_PARKING_POS_Y);
+Printer::ParkingPositionMM[Z_AXIS] = HAL::eprGetFloat(EPR_PARKING_POS_Z);
 }
 
 void EEPROM::initBaudrate()
@@ -1035,6 +1039,9 @@ void EEPROM::writeSettings()
 #else
   Com::printErrorF(Com::tNoEEPROMSupport);
 #endif
+writeFloat(EPR_PARKING_POS_X, Com::tEPRParkingX);
+writeFloat(EPR_PARKING_POS_Y, Com::tEPRParkingY);
+writeFloat(EPR_PARKING_POS_Z, Com::tEPRParkingZ);
 }
 
 #if EEPROM_MODE != 0
